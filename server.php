@@ -5,9 +5,15 @@
  * Date: 17-12-9
  * Time: 下午5:37
  */
+define('APP_DEBUG',true);
+if(APP_DEBUG){
+    error_reporting(E_ALL);//使用error_reporting来定义哪些级别错误可以触发
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+}else{
+    error_reporting(0);
+}
 ini_set('memory_limit','2048M');
-error_reporting(E_ALL);
-//error_reporting(0);
 date_default_timezone_set('Asia/Shanghai');
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT_PATH', dirname(__FILE__));
