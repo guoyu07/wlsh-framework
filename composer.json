@@ -8,7 +8,10 @@
     "redis",
     "php",
     "yaf",
-    "pdo"
+    "pdo",
+    "twig",
+    "medoo",
+    "H5"
   ],
   "license": "Apache",
   "minimum-stability": "dev",
