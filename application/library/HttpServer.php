@@ -34,11 +34,11 @@ class HttpServer{
     public function start() {
         $this->http = new swoole_http_server('0.0.0.0', 9501);
         $this->http->set([
-            'worker_num' => 8,
+            'worker_num' => 16,
             'daemonize' => false,
-            'max_request' => 100000,
+            'max_request' => 300000,
             'dispatch_mode' => 2,
-            'task_worker_num' => 8,
+            'task_worker_num' => 16,
             'log_file' => ROOT_PATH . '/log/swoole.log',
             'heartbeat_check_interval' => 660,
             'heartbeat_idle_time' => 1200,
@@ -101,7 +101,7 @@ class HttpServer{
     public function onRequest($request, $response) {
         //请求过滤,会请求2次
         if(in_array('/favicon.ico', [$request->server['path_info'], $request->server['request_uri']])){
-            $response->end();
+            return $response->end();
         }
         //注册全局信息
         Yaf\Registry::set('SWOOLE_HTTP_REQUEST', $request);

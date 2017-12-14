@@ -30,8 +30,8 @@ class IndexController extends \Yaf\Controller_Abstract {
     }
 
     public function myDBAction() {
-        $get = Yaf\Registry::get('db')->get('users', ['id', 'name'], ['id'=>1]);
-        //$get = Yaf\Registry::get('db')->query("select * from `users` ")->fetchAll(PDO::FETCH_ASSOC);
+        //$get = Yaf\Registry::get('db')->get('users', ['id', 'name'], ['id'=>1]);
+        $get = Yaf\Registry::get('db')->query("select * from `users` ")->fetchAll(PDO::FETCH_ASSOC);
 
         var_dump($get);
         return false;
