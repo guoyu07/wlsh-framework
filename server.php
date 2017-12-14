@@ -6,8 +6,8 @@
  * Time: 下午5:37
  */
 ini_set('memory_limit','2048M');
-//error_reporting(E_ALL);
-error_reporting(0);
+error_reporting(E_ALL);
+//error_reporting(0);
 date_default_timezone_set('Asia/Shanghai');
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT_PATH', dirname(__FILE__));

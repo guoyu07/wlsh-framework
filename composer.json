@@ -1,8 +1,28 @@
 {
+  "name": "hanhyu/wlsh-framework",
+  "description": "名词解释：wlsh（ 为了生活---每个字的第一个拼音 ）酷毙的码农为了生活自由，基于composer整合yaf框架与swoole等扩展，开发的php内存长驻框架，低耦合，使用非常少的语法糖，尽量使用原有扩展中的语法。",
+  "keywords": [
+    "wlsh-framework",
+    "wlsh",
+    "swoole",
+    "redis",
+    "php",
+    "yaf",
+    "pdo"
+  ],
+  "license": "Apache",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "hanhyu",
+      "email": "hanhyu@qq.com",
+      "role": "Developer"
+    }
+  ],
   "require": {
-    "php": ">=5.5.9",
+    "php": ">=7.2",
     "twig/twig": "2.4.4",
-    "catfan/Medoo": "^1.5"
+    "catfan/Medoo": "1.5.2"
   },
   "repositories": {
     "packagist": {

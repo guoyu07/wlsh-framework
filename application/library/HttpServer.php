@@ -96,29 +96,12 @@ class HttpServer{
         $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         Yaf\Registry::set('db', $database);
 
-        /*swoole_timer_tick('3000',function () use ($database){
-            if ( !($database->ping()) ){
-                echo 'mysql db is fail' . PHP_EOL;
-                $database = new \Medoo\Medoo([
-                    'database_type' => Yaf\Application::app()->getConfig()->database->driver,
-                    'database_name' => Yaf\Application::app()->getConfig()->database->database,
-                    'server' => Yaf\Application::app()->getConfig()->database->host,
-                    //'socket' => '/var/run/mysqld/mysqld.sock',
-                    'username' => Yaf\Application::app()->getConfig()->database->username,
-                    'password' => Yaf\Application::app()->getConfig()->database->password,
-                    'charset' => Yaf\Application::app()->getConfig()->database->charset
-                ]);
-                Yaf\Registry::set('db', $database);
-            }
-        });*/
-
-
     }
 
     public function onRequest($request, $response) {
         //请求过滤,会请求2次
-        if(in_array('/favicon.ico', [$request->server['path_info'],$request->server['request_uri']])){
-            return $response->end();
+        if(in_array('/favicon.ico', [$request->server['path_info'], $request->server['request_uri']])){
+            $response->end();
         }
         //注册全局信息
         Yaf\Registry::set('SWOOLE_HTTP_REQUEST', $request);

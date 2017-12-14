@@ -291,7 +291,7 @@ class Medoo
 			}
 
             if(!$statement->execute()){
-			    //断线重启pdo连接池
+                //断线重启pdo连接池
                 if( !empty($statement->errorInfo()[1]) &&  $statement->errorInfo()[1] == '2006'){
                     \Yaf\Registry::get('http')->reload();
                 }
@@ -1547,6 +1547,5 @@ class Medoo
 
 		return $output;
 	}
-
 }
 ?>
