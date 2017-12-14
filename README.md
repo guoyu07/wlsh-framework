@@ -15,8 +15,8 @@
 
 ### 安装
 
-git clone https://github.com/hanhyu/wlsh-framework.git
-或
+git clone https://github.com/hanhyu/wlsh-framework.git  
+或  
 composer create-project hanhyu/wlsh-framework wlsh dev-master
 
 
@@ -28,7 +28,7 @@ composer create-project hanhyu/wlsh-framework wlsh dev-master
 
 > wlsh-framework是可以直接独立运行，不依赖于apache，nginx等服务器。其独立运行性能远高于其它服务器。
 
-###扩展
+### 扩展
 
 wlsh-framework中初始状态只加入了两个基本的扩展：一个模板引擎twig扩展，一个PHP数据库框架medoo扩展; 其他扩展可根据自己
 使用的场景不同用composer require 安装自己想用的扩展。
@@ -39,7 +39,7 @@ wlsh-framework中初始状态只加入了两个基本的扩展：一个模板引
 使用orm写代码与使用sql写代码的时间对比可以忽略不计，当然对于那些写一个复杂点的sql就需要一整天时间的开发人员来说也不用气馁，
 酷毙的码农只有时间不缺，我们缺的只有RMB。
 
-###注意事项
+### 注意事项
 
 ```
 
