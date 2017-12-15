@@ -34,11 +34,11 @@ class HttpServer{
     public function start() {
         $this->http = new swoole_http_server('0.0.0.0', 9501);
         $this->http->set([
-            'worker_num' => 16,
+            'worker_num' => 8,
             'daemonize' => false,
             'max_request' => 300000,
             'dispatch_mode' => 2,
-            'task_worker_num' => 16,
+            'task_worker_num' => 8,
             'log_file' => ROOT_PATH . '/log/swoole.log',
             'heartbeat_check_interval' => 660,
             'heartbeat_idle_time' => 1200,
@@ -73,7 +73,10 @@ class HttpServer{
     }
 
     public function onWorkerStart($http, $worker_id) {
+
         Yaf\Loader::import(ROOT_PATH . '/vendor/autoload.php');
+
+
         //实例化yaf
         $this->yafObj = new Yaf\Application($this->configFile);
         ob_start();
@@ -95,7 +98,7 @@ class HttpServer{
         ]);
         $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         Yaf\Registry::set('db', $database);
-
+        //var_dump(get_included_files()); //此数组中的文件表示进程启动前就加载了，所以无法reload
     }
 
     public function onRequest($request, $response) {
