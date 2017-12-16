@@ -1,7 +1,7 @@
 # wlsh-framework
 > 名词解释：wlsh（ 为了生活---每个字的第一个拼音 ）
 
-酷毙的码农为了生活自由，基于composer整合yaf框架与swoole等扩展，开发的php内存长驻框架
+酷毙的码农为了生活自由，基于composer整合yaf框架与swoole等扩展开发的php内存长驻框架
 ，低耦合，使用非常少的语法糖，尽量使用原有扩展中的语法，提供最优状态以减少PHPer学习新框架的成本。
 
 ### 基本要求
@@ -24,7 +24,8 @@ composer create-project hanhyu/wlsh-framework wlsh dev-master
 
 在命令行下进入框架根目录中执行：php server.php  默认路由： http://127.0.0.1:9501
 
-目录application/library/HttpServer.php 该类是wlsh-framework的核心所在，基于swoole的服务器，业务部分由yaf完成操作。
+目录application/library/HttpServer.php 该类是wlsh-framework的核心所在，基于swoole的服务器，可同时处理http协议与websocket协议,
+且能同时开启监听多个tcp端口,实现只需启动一个类文件就可以处理多种协议状态,框架业务部分转交给yaf框架完成操作。
 
 > wlsh-framework是可以直接独立运行，不依赖于apache，nginx等服务器。其独立运行性能远高于其它服务器。
 
@@ -38,6 +39,23 @@ wlsh-framework中初始状态只加入了两个基本的扩展：一个模板引
 我们酷毙的码农不缺的就是时间，使用orm快速开发省下来的时间跟带来的性能比较，时间是唯不足道的，一天上班8小时，
 使用orm写代码与使用sql写代码的时间对比可以忽略不计，当然对于那些写一个复杂点的sql就需要一整天时间的开发人员来说也不用气馁，
 酷毙的码农只有时间不缺，我们缺的只有RMB。
+
+### 测试
+
+wlsh-framework集成了swoole client, swoole http client, swoole websocket client连接服务器测试方法
+
+```
+
+/**
+ * 测试文件使用方法
+ * 进入tests目录
+ * 在命令行中执行： php client.php TestClient websocketClient  index/index 进行websocket客户端测试
+ * 在命令行中执行： php client.php TestClient httpClient  index/index  进行http客户端测试
+ * 执行命令参数说明：第1个为文件路径 第2个为类名  第3个为方法  第4个为路由URL
+ * 在其他目录下执行,第一个文件路径参数必须为绝对目录. 如: php /var/www/wlsh-framework/tests/client.php TestClient httpClient  index/index
+ */
+
+```
 
 ### 注意事项
 
