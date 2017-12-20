@@ -122,8 +122,8 @@ class HttpServer{
             return $response->end();
         }
         //注册全局信息
-        Yaf\Registry::set('SWOOLE_HTTP_REQUEST', $request);
-        Yaf\Registry::set('swoole_http_response', $response);
+        Yaf\Registry::set('request', $request);
+        Yaf\Registry::set('response', $response);
         Yaf\Registry::set('http', $this->http);
 
         $requestObj = new Yaf\Request\Http($request->server['request_uri']);
@@ -137,8 +137,10 @@ class HttpServer{
         ob_end_clean();
         $response->end($result);
 
-        // Yaf\Registry::del('SWOOLE_HTTP_REQUEST');
-        // Yaf\Registry::del('SWOOLE_HTTP_RESPONSE');
+        //todo 这里还需要测试每一个客户端请求进来时会不会造成内存溢出
+        // Yaf\Registry::del('request');
+        // Yaf\Registry::del('response');
+        // Yaf\Registry::del('http');
     }
 
     /**
@@ -168,5 +170,7 @@ class HttpServer{
     public function onFinish($http, $task_id, $data) {
        // Yaf\Registry::get('swoole_http_response')->end($data);
     }
+
+    //todo 增加inotify修改文件可即时生效
 
 }

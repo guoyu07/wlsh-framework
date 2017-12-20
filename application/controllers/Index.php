@@ -18,21 +18,43 @@ class IndexController extends \Yaf\Controller_Abstract {
 
 	}
 
+    public function ceshiAction(){
+        echo 'ceshi001';
+        return false;
+    }
+
 	public function redisAction(){
 	    $get = Yaf\Registry::get('redis')->get('key');
 	    $this->getView()->assign("key", $get);
 	    return true;
     }
 
-    public function ceshiAction(){
-	    echo 'ceshi001';
-	    return false;
+    public function redisDBAction(){
+        $get = Yaf\Registry::get('redis')->get('key');
+        var_dump($get);
+        return false;
+    }
+
+
+
+    /**
+     *
+     * @return bool
+     */
+    public function medooAction() {
+        $get = Yaf\Registry::get('db')->get('users', ['id', 'name'], ['id'=>1]);
+        var_dump($get);
+        return false;
+    }
+
+    public function pdoAction() {
+        $get = Yaf\Registry::get('db')->query("select * from `users` ")->fetchAll(PDO::FETCH_ASSOC);
+        var_dump($get);
+        return false;
     }
 
     public function myDBAction() {
-        //$get = Yaf\Registry::get('db')->get('users', ['id', 'name'], ['id'=>1]);
-        $get = Yaf\Registry::get('db')->query("select * from `users` ")->fetchAll(PDO::FETCH_ASSOC);
-
+        $get = Yaf\Registry::get('db')->query("select * from `users` where id=1 limit 1 ")->fetchAll(PDO::FETCH_ASSOC);
         var_dump($get);
         return false;
     }

@@ -23,7 +23,7 @@ class TestClient{
         ]);
     }
 
-    public function websocketClient() {
+    public function websocket() {
         $this->cli->on('message', function ($cli, $frame) {
             var_dump($frame->data);
         });
@@ -37,7 +37,7 @@ class TestClient{
 
     }
 
-    public function httpClient() {
+    public function http() {
         $this->cli->get("index.php/{$this->url}", function ($cli) {
             //echo "Length: " . strlen($cli->body) . "\n";
             echo $cli->body;

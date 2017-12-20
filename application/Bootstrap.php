@@ -10,18 +10,6 @@
 use Yaf\Dispatcher;
 class Bootstrap extends Yaf\Bootstrap_Abstract {
     private $config;
-    /**
-     * 初始化错误,要放在最前面
-     */
-    public function _initErrors()
-    {
-        //如果为开发环境,打开所有错误提示
-        if (Yaf\ENVIRON === 'develop') {
-            error_reporting(E_ALL);//使用error_reporting来定义哪些级别错误可以触发
-            ini_set('display_errors', 1);
-            ini_set('display_startup_errors', 1);
-        }
-    }
 
     public function _initLoader(){
       // Yaf\Loader::import(ROOT_PATH . '/vendor/autoload.php');
@@ -52,8 +40,8 @@ class Bootstrap extends Yaf\Bootstrap_Abstract {
 
     public function _initPlugin(Dispatcher $dispatcher) {
         //注册一个插件
-        $objSamplePlugin = new SamplePlugin();
-        $dispatcher->registerPlugin($objSamplePlugin);
+        //$objSamplePlugin = new SamplePlugin();
+        //$dispatcher->registerPlugin($objSamplePlugin);
     }
 
     public function _initRoute(Dispatcher $dispatcher) {
@@ -74,7 +62,7 @@ class Bootstrap extends Yaf\Bootstrap_Abstract {
     public function _initTwig(Dispatcher $dispatcher)
     {
         $twig = new Twig\Adapter(ROOT_PATH . "/application/views/",$this->config->get("twig")->toArray());
-        $dispatcher->setView($twig);
+        $dispatcher::getInstance()->setView($twig);
     }
 
     //载入缓存类rEDIS
