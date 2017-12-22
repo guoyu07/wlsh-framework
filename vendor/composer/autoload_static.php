@@ -23,6 +23,10 @@ class ComposerStaticInit9791f190c7b23c9dbb2a1a43c8b877ff
         array (
             'Medoo\\' => 6,
         ),
+        'H' => 
+        array (
+            'Http\\controllers\\' => 17,
+        ),
         'A' => 
         array (
             'App\\Models\\' => 11,
@@ -41,6 +45,10 @@ class ComposerStaticInit9791f190c7b23c9dbb2a1a43c8b877ff
         'Medoo\\' => 
         array (
             0 => __DIR__ . '/..' . '/catfan/medoo/src',
+        ),
+        'Http\\controllers\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/application/modules/Http/controllers',
         ),
         'App\\Models\\' => 
         array (

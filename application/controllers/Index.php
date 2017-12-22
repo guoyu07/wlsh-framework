@@ -19,7 +19,7 @@ class IndexController extends \Yaf\Controller_Abstract {
 	}
 
     public function ceshiAction(){
-        echo 'ceshi001';
+        echo 'index ceshi';
         return false;
     }
 

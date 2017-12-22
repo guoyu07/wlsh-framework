@@ -5,7 +5,7 @@
  * @author hanhui
  */
 namespace App\Models;
-class Sample {
+class Sample{
     public function __construct() {
     }   
     

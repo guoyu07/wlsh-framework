@@ -25,14 +25,16 @@ class TestClient{
 
     public function websocket() {
         $this->cli->on('message', function ($cli, $frame) {
-            var_dump($frame->data);
+            echo $frame->data . PHP_EOL;
+            $cli->close();
         });
 
         $this->cli->upgrade("index.php/{$this->url}", function ($cli) {
             //echo $cli->body;
-            $data['name'] = 'hello world';
+            $data['uri'] = $this->url;
+            $data['msg'] = 'hello world';
             $data= json_encode($data);
-            $cli->push($data);
+            $cli->push( stripcslashes($data) );
         });
 
     }

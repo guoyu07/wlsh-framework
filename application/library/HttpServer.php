@@ -86,6 +86,8 @@ class HttpServer{
         $this->yafObj->bootstrap()->run();
         ob_end_clean();
 
+        Yaf\Registry::set('http', $http);
+
         $redis = new Redis();
         $redis->connect(Yaf\Application::app()->getConfig()->cache->host, Yaf\Application::app()->getConfig()->cache->port);
         Yaf\Registry::set('redis', $redis);
@@ -109,13 +111,28 @@ class HttpServer{
         echo '==============='. date("Y-m-d H:i:s", time()). '欢迎' . $request->fd . '进入==============' . PHP_EOL;
     }
 
-    //todo 待实现websocket路由转接
+    //todo 待试验用param参数实现快速回复发送人与广播所有人用table功能对比
+    //实现websocket路由转接
     public function onMessage($http, $frame) {
         $data = json_decode( $frame->data, true );
-        var_dump($data);
-        if( $http->exist( $frame->fd) ) $http->push( $frame->fd, json_encode($data) );
-    }
+        $result = [];
+        $result['fd'] = $frame->fd;
+        $result['data'] = $frame->data;
 
+        $requestObj = new Yaf\Request\Http($data['uri'], '/');
+        var_dump($result);
+        $requestObj->setParam($result);
+
+        ob_start();
+        try {
+            $this->yafObj->getDispatcher()->dispatch($requestObj);
+        } catch (Yaf\Exception $e) {
+            var_dump($e);
+        }
+        ob_end_clean();
+
+    }
+    //todo 这里需要过滤掉ws模块与tcp模块
     public function onRequest($request, $response) {
         //请求过滤,会请求2次
         if(in_array('/favicon.ico', [$request->server['path_info'], $request->server['request_uri']])){
@@ -124,9 +141,8 @@ class HttpServer{
         //注册全局信息
         Yaf\Registry::set('request', $request);
         Yaf\Registry::set('response', $response);
-        Yaf\Registry::set('http', $this->http);
 
-        $requestObj = new Yaf\Request\Http($request->server['request_uri']);
+        $requestObj = new Yaf\Request\Http($request->server['request_uri'], '/');
         ob_start();
         try {
             $this->yafObj->getDispatcher()->dispatch($requestObj);

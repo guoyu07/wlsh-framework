@@ -1,0 +1,7 @@
+[2017-12-22 15:55:34 *15847.7]	ERROR	zm_deactivate_swoole (ERROR 503): Fatal error: Uncaught Error: Call to undefined method Yaf\Controller_Abstract::init() in /var/www/html/wlsh-framework/application/modules/Ws/controllers/Loginws.php:13
+Stack trace:
+#0 [internal function]: LoginwsController->init()
+#1 /var/www/html/wlsh-framework/application/library/HttpServer.php(132): Yaf\Dispatcher->dispatch(Object(Yaf\Request\Http))
+#2 {main}
+  thrown in /var/www/html/wlsh-framework/application/modules/Ws/controllers/Loginws.php on line 13.
+[2017-12-22 15:55:34 $15822.0]	WARNING	swManager_check_exit_status: worker#7 abnormal exit, status=255, signal=0

@@ -59,6 +59,6 @@ class __TwigTemplate_56a73538f0bb2f012a873095a2622501e2125139320113423e0f2e3ec7f
 <h1>twig: {{ content }} I am  {{ name }}</h1>
 </body>
 </html>
-", "index/index.html", "/var/www/html/YafUnit/application/views/index/index.html");
+", "index/index.html", "/var/www/html/wlsh-framework/application/views/index/index.html");
     }
 }
