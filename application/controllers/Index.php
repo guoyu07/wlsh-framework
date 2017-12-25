@@ -18,7 +18,22 @@ class IndexController extends \Yaf\Controller_Abstract {
 
 	}
 
+    /**
+     * 这里测试的两种状态方法，可以互补。
+     * swoole中的request方法可以获取到header、server、cookie等信息
+     * yaf中的request方法可以更容易直观地获取到写业务逻辑时所需要的module、controller、method、params等信息
+     * 注意这里先设置了swoole http响应404状态，但在客户端会先打印输出的信息再把响应的状态变为404。
+     * @return bool
+     */
     public function ceshiAction(){
+        Yaf\Registry::get('response')->status(404);
+
+        var_dump(Yaf\Registry::get('request')) . PHP_EOL;
+        var_dump($this->getRequest()) . PHP_EOL;
+
+        var_dump(Yaf\Registry::get('response')) . PHP_EOL;
+        var_dump($this->getResponse()) . PHP_EOL;
+
         echo 'index ceshi';
         return false;
     }
@@ -56,6 +71,13 @@ class IndexController extends \Yaf\Controller_Abstract {
     public function myDBAction() {
         $get = Yaf\Registry::get('db')->query("select * from `users` where id=1 limit 1 ")->fetchAll(PDO::FETCH_ASSOC);
         var_dump($get);
+        return false;
+    }
+
+    public function mysqlAction() {
+        //$get = Yaf\Registry::get('mysql')->query("select * from `users` where id=1 limit 1 ");
+        //var_dump($get);
+        echo 'mysql';
         return false;
     }
 

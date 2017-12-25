@@ -79,7 +79,6 @@ class HttpServer{
         //var_dump(get_included_files()); //此数组中的文件表示进程启动前就加载了，所以无法reload
         Yaf\Loader::import(ROOT_PATH . '/vendor/autoload.php');
 
-
         //实例化yaf
         $this->yafObj = new Yaf\Application($this->configFile);
         ob_start();
@@ -103,6 +102,7 @@ class HttpServer{
         ]);
         $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         Yaf\Registry::set('db', $database);
+
 
     }
 
@@ -134,10 +134,31 @@ class HttpServer{
     }
     //todo 这里需要过滤掉ws模块与tcp模块
     public function onRequest($request, $response) {
+
         //请求过滤,会请求2次
         if(in_array('/favicon.ico', [$request->server['path_info'], $request->server['request_uri']])){
             return $response->end();
         }
+
+   /*
+    * 协程mysql
+    * 还需要进一步测试使用方法
+    * 不能在onWorkerStart中使用异步方法，即协程也不可以其中使用，所以导致使用非常不方便。
+    * $swoole_mysql = new Swoole\Coroutine\MySQL();
+        $swoole_mysql->connect([
+            'host' => '127.0.0.1',
+            'port' => 3306,
+            'user' => 'root',
+            'password' => 'root',
+            'database' => 'yaf',
+        ]);
+        //Yaf\Registry::set('mysql', $swoole_mysql);
+        //$get = Yaf\Registry::get('mysql')->query("select * from `users` where id=1 limit 1 ");
+        $get = $swoole_mysql->query("select * from `users` where id=1 limit 1 ");
+        var_dump($get);
+   */
+
+
         //注册全局信息
         Yaf\Registry::set('request', $request);
         Yaf\Registry::set('response', $response);
