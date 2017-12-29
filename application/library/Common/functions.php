@@ -335,3 +335,22 @@ function curl_multi($data, $options = array())
     return $contents;
 }
 
+function objectToArray($obj) {
+    //首先判断是否是对象
+    $arr = is_object($obj) ? get_object_vars($obj) : $obj;
+    if(is_array($arr)) {
+        //这里相当于递归了一下，如果子元素还是对象的话继续向下转换
+        return array_map(__FUNCTION__, $arr);
+    }else {
+        return $arr;
+    }
+}
+
+function arrayToObject($arr) {
+    if(is_array($arr)) {
+        return (object)array_map(__FUNCTION__, $arr);
+    }else {
+        return $arr;
+    }
+}
+

@@ -95,10 +95,17 @@ class HttpServer
 
         Yaf\Registry::set('http', $http);
 
+        //添加log日志模块
+        $log = new Monolog\Logger('name');
+        $log->pushHandler(new Monolog\Handler\StreamHandler(ROOT_PATH . '/log/swoole.log', Monolog\Logger::DEBUG));
+        Yaf\Registry::set('log', $log);
+
+        //添加redis连接池
         $redis = new Redis();
         $redis->connect(Yaf\Application::app()->getConfig()->cache->host, Yaf\Application::app()->getConfig()->cache->port);
         Yaf\Registry::set('redis', $redis);
 
+        //添加mysql数据库连接池
         $database = new \Medoo\Medoo([
             'database_type' => Yaf\Application::app()->getConfig()->database->driver,
             'database_name' => Yaf\Application::app()->getConfig()->database->database,
@@ -154,7 +161,7 @@ class HttpServer
         if (isset($path_info[1]) && !empty($path_info[1])) {
             if (lcfirst($path_info[1]) == 'ws') {
                 $response->status(404);
-                return $response->end();
+                return $response->end('404 Not Found');
             }
         }
 

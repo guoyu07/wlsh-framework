@@ -12,7 +12,7 @@ class SamplePlugin extends Yaf\Plugin_Abstract {
 	}
 
 	public function routerShutdown(Yaf\Request_Abstract $request, Yaf\Response_Abstract $response) {
-
+        //header('HTTP/1.1 404 Not Found');
 	}
 
 	public function dispatchLoopStartup(Yaf\Request_Abstract $request, Yaf\Response_Abstract $response) {

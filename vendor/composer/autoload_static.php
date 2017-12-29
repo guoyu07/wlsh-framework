@@ -19,13 +19,14 @@ class ComposerStaticInit9791f190c7b23c9dbb2a1a43c8b877ff
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
         ),
+        'P' => 
+        array (
+            'Psr\\Log\\' => 8,
+        ),
         'M' => 
         array (
+            'Monolog\\' => 8,
             'Medoo\\' => 6,
-        ),
-        'H' => 
-        array (
-            'Http\\controllers\\' => 17,
         ),
         'A' => 
         array (
@@ -42,13 +43,17 @@ class ComposerStaticInit9791f190c7b23c9dbb2a1a43c8b877ff
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
+        'Monolog\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
         'Medoo\\' => 
         array (
             0 => __DIR__ . '/..' . '/catfan/medoo/src',
-        ),
-        'Http\\controllers\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/application/modules/Http/controllers',
         ),
         'App\\Models\\' => 
         array (

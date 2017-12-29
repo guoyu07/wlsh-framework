@@ -31,8 +31,6 @@ class IndexController extends \Yaf\Controller_Abstract
      */
     public function ceshiAction()
     {
-        Yaf\Registry::get('response')->status(404);
-
         var_dump(Yaf\Registry::get('request')) . PHP_EOL;
         var_dump($this->getRequest()) . PHP_EOL;
 
@@ -85,9 +83,10 @@ class IndexController extends \Yaf\Controller_Abstract
 
     public function mysqlAction()
     {
-        //$get = Yaf\Registry::get('mysql')->query("select * from `users` where id=1 limit 1 ");
-        //var_dump($get);
+        $get = Yaf\Registry::get('db')->query("select * from `users` where id=1 limit 1 ")->fetchAll(PDO::FETCH_ASSOC);
         echo 'mysql';
+        //todo 需要测试用task保存日志
+        Yaf\Registry::get('log')->info('mysql data:', $get);
         return false;
     }
 

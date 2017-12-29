@@ -25,7 +25,8 @@
   "require": {
     "php": ">=7.2",
     "twig/twig": "2.4.4",
-    "catfan/Medoo": "1.5.2"
+    "catfan/Medoo": "1.5.2",
+    "monolog/monolog": "^2.0@dev"
   },
   "repositories": {
     "packagist": {
