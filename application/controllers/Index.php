@@ -4,19 +4,23 @@
  * @author hanhui
  * @desc 默认控制器
  */
+
 use App\Models\Users;
-class IndexController extends \Yaf\Controller_Abstract {
 
-	public function indexAction($name = "Stranger") {
+class IndexController extends \Yaf\Controller_Abstract
+{
 
-		$get = $this->getRequest()->getQuery("get", "default value");
+    public function indexAction($name = "Stranger")
+    {
 
-		$this->getView()->assign("content", 'hanhui');
-		$this->getView()->assign("name", $name);
+        $get = $this->getRequest()->getQuery("get", "default value");
 
-		return true;
+        $this->getView()->assign("content", 'hanhui');
+        $this->getView()->assign("name", $name);
 
-	}
+        return true;
+
+    }
 
     /**
      * 这里测试的两种状态方法，可以互补。
@@ -25,7 +29,8 @@ class IndexController extends \Yaf\Controller_Abstract {
      * 注意这里先设置了swoole http响应404状态，但在客户端会先打印输出的信息再把响应的状态变为404。
      * @return bool
      */
-    public function ceshiAction(){
+    public function ceshiAction()
+    {
         Yaf\Registry::get('response')->status(404);
 
         var_dump(Yaf\Registry::get('request')) . PHP_EOL;
@@ -38,50 +43,62 @@ class IndexController extends \Yaf\Controller_Abstract {
         return false;
     }
 
-	public function redisAction(){
-	    $get = Yaf\Registry::get('redis')->get('key');
-	    $this->getView()->assign("key", $get);
-	    return true;
+    public function redisAction()
+    {
+        $get = Yaf\Registry::get('redis')->get('key');
+        $this->getView()->assign("key", $get);
+        return true;
     }
 
-    public function redisDBAction(){
+    public function redisDBAction()
+    {
         $get = Yaf\Registry::get('redis')->get('key');
         var_dump($get);
         return false;
     }
 
 
-
     /**
      *
      * @return bool
      */
-    public function medooAction() {
-        $get = Yaf\Registry::get('db')->get('users', ['id', 'name'], ['id'=>1]);
+    public function medooAction()
+    {
+        $get = Yaf\Registry::get('db')->get('users', ['id', 'name'], ['id' => 1]);
         var_dump($get);
         return false;
     }
 
-    public function pdoAction() {
+    public function pdoAction()
+    {
         $get = Yaf\Registry::get('db')->query("select * from `users` ")->fetchAll(PDO::FETCH_ASSOC);
         var_dump($get);
         return false;
     }
 
-    public function myDBAction() {
+    public function myDBAction()
+    {
         $get = Yaf\Registry::get('db')->query("select * from `users` where id=1 limit 1 ")->fetchAll(PDO::FETCH_ASSOC);
         var_dump($get);
         return false;
     }
 
-    public function mysqlAction() {
+    public function mysqlAction()
+    {
         //$get = Yaf\Registry::get('mysql')->query("select * from `users` where id=1 limit 1 ");
         //var_dump($get);
         echo 'mysql';
         return false;
     }
 
-    public function taskAction() {
+    public function coTcpClientAction()
+    {
+
+        return false;
+    }
+
+    public function taskAction()
+    {
         Yaf\Dispatcher::getInstance()->disableView();
         Yaf\Registry::get('http')->task('task');
     }

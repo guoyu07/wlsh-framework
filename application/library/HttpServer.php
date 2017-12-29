@@ -1,11 +1,13 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: hanhui
  * Date: 17-12-9
  * Time: 下午5:17
  */
-class HttpServer{
+class HttpServer
+{
     private $http;
     private $tcp;
     private $table;
@@ -13,14 +15,16 @@ class HttpServer{
     private $yafObj;
     protected static $instance = null;
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (empty(self::$instance) || !(self::$instance instanceof HttpServer)) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
     }
 
     public function setConfigIni($configIni)
@@ -31,7 +35,8 @@ class HttpServer{
         $this->configFile = $configIni;
     }
 
-    public function start() {
+    public function start()
+    {
         $this->http = new Swoole\Websocket\Server('0.0.0.0', 9501);
         $this->http->set([
             'worker_num' => 8,
@@ -64,18 +69,21 @@ class HttpServer{
         $this->http->start();
     }
 
-    public function onStart($http) {
+    public function onStart($http)
+    {
         echo "Swoole http server is started at http://127.0.0.1:9501\n";
         $myfile = fopen(ROOT_PATH . '/log/swoolePid.log', 'w');
-        fwrite($myfile, json_encode(['masterPid'=>$http->master_pid]));
+        fwrite($myfile, json_encode(['masterPid' => $http->master_pid]));
         fclose($myfile);
     }
 
-    public function onManagerStart($http) {
+    public function onManagerStart($http)
+    {
 
     }
 
-    public function onWorkerStart($http, $worker_id) {
+    public function onWorkerStart($http, $worker_id)
+    {
         //var_dump(get_included_files()); //此数组中的文件表示进程启动前就加载了，所以无法reload
         Yaf\Loader::import(ROOT_PATH . '/vendor/autoload.php');
 
@@ -103,18 +111,19 @@ class HttpServer{
         $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         Yaf\Registry::set('db', $database);
 
-
     }
 
     //todo 待实现websocket连接token安全认证
-    public function onOpen($http, $request) {
-        echo '==============='. date("Y-m-d H:i:s", time()). '欢迎' . $request->fd . '进入==============' . PHP_EOL;
+    public function onOpen($http, $request)
+    {
+        echo '===============' . date("Y-m-d H:i:s", time()) . '欢迎' . $request->fd . '进入==============' . PHP_EOL;
     }
 
     //todo 待试验用param参数实现快速回复发送人与广播所有人用table功能对比
     //实现websocket路由转接
-    public function onMessage($http, $frame) {
-        $data = json_decode( $frame->data, true );
+    public function onMessage($http, $frame)
+    {
+        $data = json_decode($frame->data, true);
         $result = [];
         $result['fd'] = $frame->fd;
         $result['data'] = $frame->data;
@@ -132,32 +141,22 @@ class HttpServer{
         ob_end_clean();
 
     }
-    //todo 这里需要过滤掉ws模块与tcp模块
-    public function onRequest($request, $response) {
 
+    public function onRequest(Swoole\Http\Request $request, Swoole\Http\Response $response)
+    {
         //请求过滤,会请求2次
-        if(in_array('/favicon.ico', [$request->server['path_info'], $request->server['request_uri']])){
+        if (in_array('/favicon.ico', [$request->server['path_info'], $request->server['request_uri']])) {
             return $response->end();
         }
 
-   /*
-    * 协程mysql
-    * 还需要进一步测试使用方法
-    * 不能在onWorkerStart中使用异步方法，即协程也不可以其中使用，所以导致使用非常不方便。
-    * $swoole_mysql = new Swoole\Coroutine\MySQL();
-        $swoole_mysql->connect([
-            'host' => '127.0.0.1',
-            'port' => 3306,
-            'user' => 'root',
-            'password' => 'root',
-            'database' => 'yaf',
-        ]);
-        //Yaf\Registry::set('mysql', $swoole_mysql);
-        //$get = Yaf\Registry::get('mysql')->query("select * from `users` where id=1 limit 1 ");
-        $get = $swoole_mysql->query("select * from `users` where id=1 limit 1 ");
-        var_dump($get);
-   */
-
+        //todo 这里需要过滤掉ws模块与tcp模块
+        $path_info = explode('/', $request->server['path_info']);
+        if (isset($path_info[1]) && !empty($path_info[1])) {
+            if (lcfirst($path_info[1]) == 'ws') {
+                $response->status(404);
+                return $response->end();
+            }
+        }
 
         //注册全局信息
         Yaf\Registry::set('request', $request);
@@ -189,23 +188,25 @@ class HttpServer{
      * @param $data
      * @return bool
      */
-    public function onTask($http, $task_id, $reactor_id, $data) {
+    public function onTask($http, $task_id, $reactor_id, $data)
+    {
         //$get = Yaf\Registry::get('db')->query("select * from `users` ")->fetchAll(PDO::FETCH_ASSOC);
         //var_dump($get);
         //$get = Yaf\Registry::get('redis')->get('key');
         //echo $get;
-       return true;
-
+        return true;
 
     }
 
-    public function onClose($http, $fd) {
-       // echo "client-{$fd} is closed" . PHP_EOL;
+    public function onClose($http, $fd)
+    {
+        // echo "client-{$fd} is closed" . PHP_EOL;
         //echo '==============='. date("Y-m-d H:i:s", time()). '欢送' . $fd . '离开==============' . PHP_EOL;
     }
 
-    public function onFinish($http, $task_id, $data) {
-       // Yaf\Registry::get('swoole_http_response')->end($data);
+    public function onFinish($http, $task_id, $data)
+    {
+        // Yaf\Registry::get('swoole_http_response')->end($data);
     }
 
     //todo 增加inotify修改文件可即时生效

@@ -1,0 +1,35 @@
+[2017-12-28 19:07:03 *17291.7]	ERROR	zm_deactivate_swoole (ERROR 503): Fatal error: Uncaught Error: Call to a member function status() on null in /var/www/html/wlsh-framework/application/plugins/Sample.php:17
+Stack trace:
+#0 [internal function]: SamplePlugin->routerShutdown(Object(Yaf\Request\Http), Object(Yaf\Response\Cli))
+#1 /var/www/html/wlsh-framework/application/library/HttpServer.php(126): Yaf\Dispatcher->dispatch(Object(Yaf\Request\Http))
+#2 {main}
+  thrown in /var/www/html/wlsh-framework/application/plugins/Sample.php on line 17.
+[2017-12-28 19:07:03 $17266.0]	WARNING	swManager_check_exit_status: worker#7 abnormal exit, status=255, signal=0
+[2017-12-28 19:07:21 *17345.7]	ERROR	zm_deactivate_swoole (ERROR 503): Fatal error: Uncaught Error: Call to a member function status() on null in /var/www/html/wlsh-framework/application/plugins/Sample.php:17
+Stack trace:
+#0 [internal function]: SamplePlugin->routerShutdown(Object(Yaf\Request\Http), Object(Yaf\Response\Cli))
+#1 /var/www/html/wlsh-framework/application/library/HttpServer.php(126): Yaf\Dispatcher->dispatch(Object(Yaf\Request\Http))
+#2 {main}
+  thrown in /var/www/html/wlsh-framework/application/plugins/Sample.php on line 17.
+[2017-12-28 19:07:21 $17266.0]	WARNING	swManager_check_exit_status: worker#7 abnormal exit, status=255, signal=0
+[2017-12-28 19:07:26 *17347.7]	ERROR	zm_deactivate_swoole (ERROR 503): Fatal error: Uncaught Error: Call to a member function status() on null in /var/www/html/wlsh-framework/application/controllers/Index.php:29
+Stack trace:
+#0 [internal function]: IndexController->ceshiAction()
+#1 /var/www/html/wlsh-framework/application/library/HttpServer.php(126): Yaf\Dispatcher->dispatch(Object(Yaf\Request\Http))
+#2 {main}
+  thrown in /var/www/html/wlsh-framework/application/controllers/Index.php on line 29.
+[2017-12-28 19:07:26 $17266.0]	WARNING	swManager_check_exit_status: worker#7 abnormal exit, status=255, signal=0
+[2017-12-28 19:07:54 *17389.7]	ERROR	zm_deactivate_swoole (ERROR 503): Fatal error: Uncaught Error: Call to a member function status() on null in /var/www/html/wlsh-framework/application/plugins/Sample.php:17
+Stack trace:
+#0 [internal function]: SamplePlugin->routerShutdown(Object(Yaf\Request\Http), Object(Yaf\Response\Cli))
+#1 /var/www/html/wlsh-framework/application/library/HttpServer.php(126): Yaf\Dispatcher->dispatch(Object(Yaf\Request\Http))
+#2 {main}
+  thrown in /var/www/html/wlsh-framework/application/plugins/Sample.php on line 17.
+[2017-12-28 19:07:54 $17364.0]	WARNING	swManager_check_exit_status: worker#7 abnormal exit, status=255, signal=0
+[2017-12-28 19:08:55 *17435.7]	ERROR	zm_deactivate_swoole (ERROR 503): Fatal error: Uncaught Error: Call to a member function status() on null in /var/www/html/wlsh-framework/application/plugins/Sample.php:17
+Stack trace:
+#0 [internal function]: SamplePlugin->routerShutdown(Object(Yaf\Request\Http), Object(Yaf\Response\Cli))
+#1 /var/www/html/wlsh-framework/application/library/HttpServer.php(126): Yaf\Dispatcher->dispatch(Object(Yaf\Request\Http))
+#2 {main}
+  thrown in /var/www/html/wlsh-framework/application/plugins/Sample.php on line 17.
+[2017-12-28 19:08:55 $17410.0]	WARNING	swManager_check_exit_status: worker#7 abnormal exit, status=255, signal=0
