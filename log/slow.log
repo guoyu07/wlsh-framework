@@ -1,0 +1,36 @@
+
+[11-Jan-2018 15:11:57]  [worker#0] pid 21042
+[0x00007fe94021ca10] sleep() /var/www/html/wlsh-framework/application/library/HttpServer.php:231
+[0x00007fe94021c9b0] test() /var/www/html/wlsh-framework/application/library/HttpServer.php:157
+[0x00007fe94021c6c0] onRequest() /var/www/html/wlsh-framework/application/library/HttpServer.php:72
+[0x00007fe94021c670] start() /var/www/html/wlsh-framework/application/library/HttpServer.php:72
+[0x00007fe94021c300] start() /var/www/html/wlsh-framework/server.php:26
+
+[11-Jan-2018 15:12:02]  [worker#0] pid 21042
+[0x00007fe94021ca10] sleep() /var/www/html/wlsh-framework/application/library/HttpServer.php:231
+[0x00007fe94021c9b0] test() /var/www/html/wlsh-framework/application/library/HttpServer.php:157
+[0x00007fe94021c6c0] onRequest() /var/www/html/wlsh-framework/application/library/HttpServer.php:72
+[0x00007fe94021c670] start() /var/www/html/wlsh-framework/application/library/HttpServer.php:72
+[0x00007fe94021c300] start() /var/www/html/wlsh-framework/server.php:26
+
+[11-Jan-2018 15:45:27]  [worker#0] pid 23826
+[0x00007f39e9c1ca10] sleep() /var/www/html/wlsh-framework/application/library/HttpServer.php:231
+[0x00007f39e9c1c9b0] test() /var/www/html/wlsh-framework/application/library/HttpServer.php:157
+[0x00007f39e9c1c6c0] onRequest() /var/www/html/wlsh-framework/application/library/HttpServer.php:72
+[0x00007f39e9c1c670] start() /var/www/html/wlsh-framework/application/library/HttpServer.php:72
+[0x00007f39e9c1c300] start() /var/www/html/wlsh-framework/server.php:26
+
+[11-Jan-2018 15:45:32]  [worker#0] pid 23826
+[0x00007f39e9c1ca10] sleep() /var/www/html/wlsh-framework/application/library/HttpServer.php:231
+[0x00007f39e9c1c9b0] test() /var/www/html/wlsh-framework/application/library/HttpServer.php:157
+[0x00007f39e9c1c6c0] onRequest() /var/www/html/wlsh-framework/application/library/HttpServer.php:72
+[0x00007f39e9c1c670] start() /var/www/html/wlsh-framework/application/library/HttpServer.php:72
+[0x00007f39e9c1c300] start() /var/www/html/wlsh-framework/server.php:26
+
+[11-Jan-2018 15:47:02]  [worker#0] pid 23923
+[0x00007f7e1961cae0] sleep() /var/www/html/wlsh-framework/application/controllers/Index.php:99
+[0x00007f7e1961ca00] coTcpClientAction() /var/www/html/wlsh-framework/application/library/HttpServer.php:178
+[0x00007f7e1961c9a0] dispatch() /var/www/html/wlsh-framework/application/library/HttpServer.php:178
+[0x00007f7e1961c6c0] onRequest() /var/www/html/wlsh-framework/application/library/HttpServer.php:72
+[0x00007f7e1961c670] start() /var/www/html/wlsh-framework/application/library/HttpServer.php:72
+[0x00007f7e1961c300] start() /var/www/html/wlsh-framework/server.php:26

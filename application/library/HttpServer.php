@@ -37,7 +37,7 @@ class HttpServer
 
     public function start()
     {
-        $this->http = new Swoole\Websocket\Server('0.0.0.0', 9501);
+        $this->http = new Swoole\WebSocket\Server('0.0.0.0', 9501);
         $this->http->set([
             'worker_num' => 8,
             'daemonize' => false,
@@ -48,13 +48,16 @@ class HttpServer
             'log_file' => ROOT_PATH . '/log/swoole.log',
             'heartbeat_check_interval' => 660,
             'heartbeat_idle_time' => 1200,
+            'trace_event_worker' => true,
+            'request_slowlog_timeout' => 1,
+            'request_slowlog_file' => ROOT_PATH . '/log/slow.log',
             //'ssl_cert_file' => '/tmp/ssl.crt',
             //'ssl_key_file' => '/tmp/ssl.key',
             //'open_http2_protocol' => true
         ]);
 
-        $this->table = new swoole_table(1024);
-        $this->table->column('name', swoole_table::TYPE_STRING, 128);
+        $this->table = new Swoole\Table(1024);
+        $this->table->column('name', Swoole\Table::TYPE_STRING, 128);
         $this->table->create();
 
         $this->http->on('start', [$this, 'onStart']);
@@ -69,7 +72,7 @@ class HttpServer
         $this->http->start();
     }
 
-    public function onStart($http)
+    public function onStart(Swoole\WebSocket\Server $http)
     {
         echo "Swoole http server is started at http://127.0.0.1:9501\n";
         $myfile = fopen(ROOT_PATH . '/log/swoolePid.log', 'w');
@@ -77,12 +80,12 @@ class HttpServer
         fclose($myfile);
     }
 
-    public function onManagerStart($http)
+    public function onManagerStart(Swoole\WebSocket\Server $http)
     {
 
     }
 
-    public function onWorkerStart($http, $worker_id)
+    public function onWorkerStart(Swoole\WebSocket\Server $http, $worker_id)
     {
         //var_dump(get_included_files()); //此数组中的文件表示进程启动前就加载了，所以无法reload
         Yaf\Loader::import(ROOT_PATH . '/vendor/autoload.php');
@@ -121,14 +124,14 @@ class HttpServer
     }
 
     //todo 待实现websocket连接token安全认证
-    public function onOpen($http, $request)
+    public function onOpen(Swoole\WebSocket\Server $http, Swoole\Http\Request $request)
     {
         echo '===============' . date("Y-m-d H:i:s", time()) . '欢迎' . $request->fd . '进入==============' . PHP_EOL;
     }
 
     //todo 待试验用param参数实现快速回复发送人与广播所有人用table功能对比
     //实现websocket路由转接
-    public function onMessage($http, $frame)
+    public function onMessage(Swoole\WebSocket\Server $http, Swoole\WebSocket\Frame $frame)
     {
         $data = json_decode($frame->data, true);
         $result = [];
@@ -195,7 +198,7 @@ class HttpServer
      * @param $data
      * @return bool
      */
-    public function onTask($http, $task_id, $reactor_id, $data)
+    public function onTask(Swoole\WebSocket\Server $http, $task_id, $reactor_id, $data)
     {
         //$get = Yaf\Registry::get('db')->query("select * from `users` ")->fetchAll(PDO::FETCH_ASSOC);
         //var_dump($get);
@@ -205,13 +208,13 @@ class HttpServer
 
     }
 
-    public function onClose($http, $fd)
+    public function onClose(Swoole\WebSocket\Server $http, $fd)
     {
         // echo "client-{$fd} is closed" . PHP_EOL;
         //echo '==============='. date("Y-m-d H:i:s", time()). '欢送' . $fd . '离开==============' . PHP_EOL;
     }
 
-    public function onFinish($http, $task_id, $data)
+    public function onFinish(Swoole\WebSocket\Server $http, $task_id, $data)
     {
         // Yaf\Registry::get('swoole_http_response')->end($data);
     }

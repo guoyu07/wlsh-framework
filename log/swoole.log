@@ -1,1 +1,2 @@
 [2017-12-29T19:57:35.964260+08:00] name.INFO: mysql data: [{"id":"1","name":"swoole"}] []
+[2018-01-11 14:54:14 *18036.7]	NOTICE	swFactoryProcess_finish (ERROR 1004): send 287 byte failed, because connection[fd=1] is closed.

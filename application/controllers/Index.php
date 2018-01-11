@@ -92,7 +92,11 @@ class IndexController extends \Yaf\Controller_Abstract
 
     public function coTcpClientAction()
     {
-
+        echo getmygid() . PHP_EOL;
+        echo getmyuid() . PHP_EOL;
+        echo getmyinode() . PHP_EOL;
+        echo getmypid() . PHP_EOL;
+        sleep(3);
         return false;
     }
 
