@@ -91,15 +91,15 @@ class HttpServer
         Yaf\Loader::import(ROOT_PATH . '/vendor/autoload.php');
 
         //实例化yaf
-        $this->yafObj = new Yaf\Application($this->configFile);
+        $this->yafObj = new Yaf\Application($this->configFile, ini_get('yaf.environ'));
         ob_start();
         $this->yafObj->bootstrap()->run();
         ob_end_clean();
 
         Yaf\Registry::set('http', $http);
 
-        //添加log日志模块
-        $log = new Monolog\Logger('name');
+        //添加log日志模块,使用ini_get获取yaf配置节，达到动态分类显示日志，如：开发环境日志，测试环境日志，生产环境日志等
+        $log = new Monolog\Logger(ini_get('yaf.environ'));
         $log->pushHandler(new Monolog\Handler\StreamHandler(ROOT_PATH . '/log/swoole.log', Monolog\Logger::DEBUG));
         Yaf\Registry::set('log', $log);
 
@@ -173,14 +173,17 @@ class HttpServer
         Yaf\Registry::set('response', $response);
 
         $requestObj = new Yaf\Request\Http($request->server['request_uri'], '/');
+
         ob_start();
         try {
             $this->yafObj->getDispatcher()->dispatch($requestObj);
         } catch (Yaf\Exception $e) {
-            var_dump($e);
+            var_dump($e->getMessage());
+            $response->status(404);
         }
         $result = ob_get_contents();
         ob_end_clean();
+
         $response->end($result);
 
         //todo 这里还需要测试每一个客户端请求进来时会不会造成内存溢出

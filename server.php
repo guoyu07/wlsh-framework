@@ -7,9 +7,10 @@
  */
 define('APP_DEBUG',true);
 if(APP_DEBUG){
-    error_reporting(E_ALL);//使用error_reporting来定义哪些级别错误可以触发
+    error_reporting(E_ALL);//使用error_reporting来定义哪些级别错误可以触发 -1
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
+    ini_set('log_errors', 1);
 }else{
     error_reporting(0);
 }

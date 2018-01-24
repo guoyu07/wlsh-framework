@@ -7,19 +7,24 @@
  * 这些方法, 都接受一个参数:Yaf_Dispatcher $dispatcher
  * 调用的次序, 和申明的次序相同
  */
+
 use Yaf\Dispatcher;
-class Bootstrap extends Yaf\Bootstrap_Abstract {
+
+class Bootstrap extends Yaf\Bootstrap_Abstract
+{
     private $config;
 
-    public function _initLoader(){
-      // Yaf\Loader::import(ROOT_PATH . '/vendor/autoload.php');
+    public function _initLoader()
+    {
+        // Yaf\Loader::import(ROOT_PATH . '/vendor/autoload.php');
     }
 
-    public function _initConfig() {
-		//把配置保存起来
+    public function _initConfig()
+    {
+        //把配置保存起来
         $this->config = Yaf\Application::app()->getConfig();
-		Yaf\Registry::set('config', $this->config);
-	}
+        Yaf\Registry::set('config', $this->config);
+    }
 
     /**
      * 日志
@@ -27,35 +32,30 @@ class Bootstrap extends Yaf\Bootstrap_Abstract {
      */
     public function _initLogger(Dispatcher $dispatcher)
     {
-        //SocketLog
-        if (Yaf\ENVIRON === 'develop') {
-            if ($this->config->socketlog->enable) {
-                //载入
-                Yaf\Loader::import('Common/Logger/slog.function.php');
-                //配置SocketLog
-                slog($this->config->socketlog->toArray(),'config');
-            }
-        }
+
     }
 
-    public function _initPlugin(Dispatcher $dispatcher) {
+    public function _initPlugin(Dispatcher $dispatcher)
+    {
         //注册一个插件
         //$objSamplePlugin = new SamplePlugin();
         //$dispatcher->registerPlugin($objSamplePlugin);
     }
 
-    public function _initRoute(Dispatcher $dispatcher) {
-		//在这里注册自己的路由协议,默认使用简单路由
+    public function _initRoute(Dispatcher $dispatcher)
+    {
+        //在这里注册自己的路由协议,默认使用简单路由
         $router = $dispatcher::getInstance()->getRouter();
         $route = new Yaf\Route\Supervar("r");
         $router->addRoute("name", $route);
 
-	}
+    }
 
     /**
      * LocalName
      */
-    public function _initLocalName() {
+    public function _initLocalName()
+    {
 
     }
 
@@ -65,7 +65,7 @@ class Bootstrap extends Yaf\Bootstrap_Abstract {
      */
     public function _initTwig(Dispatcher $dispatcher)
     {
-        $twig = new Twig\Adapter(ROOT_PATH . "/application/views/",$this->config->get("twig")->toArray());
+        $twig = new Twig\Adapter(ROOT_PATH . "/application/views/", $this->config->get("twig")->toArray());
         $dispatcher::getInstance()->setView($twig);
     }
 
@@ -74,6 +74,7 @@ class Bootstrap extends Yaf\Bootstrap_Abstract {
     {
 
     }
+
     /**
      * 公用函数载入
      */

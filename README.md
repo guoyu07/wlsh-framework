@@ -35,6 +35,8 @@ composer create-project hanhyu/wlsh-framework wlsh dev-master
 wlsh-framework中初始状态只加入了两个基本的扩展：一个模板引擎twig扩展，一个PHP数据库框架medoo扩展; 其他扩展可根据自己
 使用的场景不同用composer require 安装自己想用的扩展。
 
+> 推荐使用awesome-php中所列出的PHP资源，其对应的中文翻译列表：<http://www.cnblogs.com/taletao/p/4212916.html/>
+
 > 为什么不使用数据库orm框架，作者做过大量测试，使用orm时运行的性能非常低下，且会增加PHPer学习成本。所以推荐使用基本的pdo扩展就足够用了。
 找了很多扩展最后发现medoo扩展是基于pdo开发的，且测试性能基本与原生pdo性能一致。当然，更推荐直接使用sql语句开发，
 我们酷毙的码农不缺的就是时间，使用orm快速开发省下来的时间跟带来的性能比较，时间是唯不足道的，一天上班8小时，
