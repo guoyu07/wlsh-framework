@@ -1,356 +1,279 @@
 <?php
-/***
- * 函数库
- * @author jsyzchenchen@gmail.com
- * date 2015-11-30
- */
+/*ansic码-Url码表： http://www.w3school.com.cn/tags/html_ref_urlencode.html
+
+-----------------------------------------------------------------------------------------------------------------
+
+1、验证过滤用户的输入
+
+         即使是最普通的字母数字输入也可能是危险的，列举几个容易引起安全问题的字符：
+
+         ! $ ^ & * ( ) ~ [ ] \ | { } ' " ; < > ? - `
+
+         在数据库中可能有特殊意义的字符：
+
+         ' " ; \
+
+         还有一些非打印字符：
+
+         字符\x00或者说ASCII 0，NULL或FALSE
+
+         字符\x10和\x13，或者说ASCII 10和13，\n \r
+
+         字符\x1a或者说ASCII 26，表示文件的结束
+
+         输入错误的参数类型，也可能导致程序出现意想不到的错误。
+
+         输入过多的参数值，可能导致溢出等错误。
+
+2、对于文件的路径与名称的过滤
+
+         文件名中不能包含二进制数据，否则可能引起问题。
+
+         一些系统允许Unicode多字节编码的文件名，但是尽量避免，应当使用ASCII的字符。
+
+         虽然Unix系统几乎可以在文件名设定中使用任何符号，但是应当尽量使用 - 和 _ 避免使用其他字符。
+
+         同时需要限定文件名的长度。
+
+3、防止SQL注入
+
+         检查用户输入的类型，当用户输入的为数字时可以使用如下方式：
+
+         使用is_int()函数（或is_integer()或is_long()函数）
+
+         使用gettype()函数
+
+         使用intval()函数
+
+         使用settype()函数
+
+         检查用户输入字符串的长度使用strlen()函数。
+
+         检查日期或时间是否是有效的，可以使用strtotime()函数
+
+4、防止XSS攻击
+
+         xss攻击一个常用的方法就是注入HTML元素执行js脚本，php中已经内置了一些防御的函数（如htmlentities或者htmlspecialchars）
+
+5、过滤用户提交的URL
+
+         如果允许用户输入一个URL用来调用一个图片或者链接，你需要保证他不传入javascript:或者vbscript:或data:等非http协议。
+
+         可以使用php的内置函数parse_url()函数来分割URL，然后做判断。
+
+6、防止远程执行--下表列出了跟Shell相关的一些字符：
+
+         远程执行通常是使用了php代码执行如eval()函数，或者是调用了命令执行如exec()，passthru()，proc_open()，shell_exec()，system()或popen()。
+
+         注入php代码：php为开发者提供了非常多的方法可以来调用允许php脚本，我们就需要注意对用户可控的数据进行过滤。
+
+7、Shell命令执行
+
+         PHP提供了一些可以直接执行系统命令的函数，如exec()函数或者 `（反引号）。
+
+         PHP的安全模式会提供一些保护，但是也有一些方式可以绕过安全模式：
+
+         1、上传一个Perl脚本，或者Python或Ruby等，服务器支持的环境，来执行其他语言的脚本可绕过PHP的安全模式。
+
+         2、利用系统的缓冲溢出漏洞，绕过安全模式。
+
+                   跟Shell相关的一些字符：
+
+                   名称        字符        ASCII       16进制 URL编码         HTML编码
+
+                   换行                           10             \x0a        %0a                   &#10
+
+                   感叹号   !                33             \x21         %21                  &#33
+
+                   双引号   "               34             \x22         %22                  &#34或&quot
+
+                   美元符号 $             36             \x24         %24                  &#36
+
+                   连接符   &              38             \x26         %26                  &#38或&#amp
+
+                   单引号   '                39             \x27         %27                  &#39
+
+                   左括号   (                40             \x28         %28                  &#40
+
+                   右括号   )                41             \x29         %29                  &#41
+
+                   星号        *               42             \x2a        %2a                   &#42
+
+                   连字符号 -              45             \x2d         %2d                  &#45
+
+                   分号        ;                59             \x3b        %3b                   &#59
+
+                   左尖括号 <             60             \x3c         %3c                  &#60
+
+                   右尖括号 >             62             \x3e         %3e                  &#62
+
+                   问号        ?               63             \x3f         %3f                    &#63
+
+                   左方括号 [              91             \x5b         %5b                  &#91
+
+                   反斜线   \                92             \x5c         %5c                  &#92
+
+                   右方括号 ]              93             \x5d         %5d                  &#93
+
+                   插入符   ^               94             \x5e         %5e                  &#94
+
+                   反引号   `                96             \x60         %60                  &#96
+
+                   左花括号 {              123          \x7b         %7b                  &#123
+
+                   管道符   |               124          \x7c         %7c                  &#124
+
+                   右花括号 }              125          \x7d         %7d                  &#125
+
+                   波浪号   ~               126          \x7e         %7e                  &#126
+
+-----------------------------------------------------------------------------------------------------------------
+php提交数据过滤的基本原则
+1）提交变量进数据库时，我们必须使用addslashes()进行过滤，像我们的注入问题，一个addslashes()也就搞定了。其实在涉及到变量取值时，intval()函数对字符串的过滤也是个不错的选择。
+2）在php.ini中开启magic_quotes_gpc和magic_quotes_runtime。magic_quotes_gpc可以把get,post,cookie里的引号变为斜杠。magic_quotes_runtime对于进出数据库的数据可以起到格式话的作用。其实，早在以前注入很疯狂时，这个参数就很流行了。
+3）在使用系统函数时，必须使用escapeshellarg(),escapeshellcmd()参数去过滤，这样你也就可以放心的使用系统函数。
+4）对于跨站，strip_tags(),htmlspecialchars()两个参数都不错，对于用户提交的的带有html和php的标记都将进行转换。比如尖括号"<"就将转化为 "<"这样无害的字符。
+$new = htmlspecialchars("<a href='test'>Test</a>", ENT_QUOTES);
+strip_tags($text,);
+5）对于相关函数的过滤，就像先前的include(),unlink,fopen()等等，只要你把你所要执行操作的变量指定好或者对相关字符过滤严密
+
+安全过滤函数代码*/
+
 
 /**
- * 获取输入参数 支持过滤和默认值 From ThinkPHP 系统函数库(I函数)
- * 使用方法:
- * <code>
- * input('id',0); 获取id参数 自动判断get或者post
- * input('post.name','','htmlspecialchars'); 获取$_POST['name']
- * input('get.'); 获取$_GET
- * </code>
- * @param string $name 变量的名称 支持指定类型
- * @param mixed $default 不存在的时候默认值
- * @param mixed $filter 参数过滤方法
- * @param mixed $datas 要获取的额外数据源
- * @return mixed
+ * 安全过滤输入[jb]
  */
-function input($name,$default='',$filter=null,$datas=null) {
-    static $_PUT	=	null;
-    if(strpos($name,'/')){ // 指定修饰符
-        list($name,$type) 	=	explode('/',$name,2);
-    }else{ // 默认强制转换为字符串
-        $type   =   's';
-    }
-    if(strpos($name,'.')) { // 指定参数来源
-        list($method,$name) =   explode('.',$name,2);
-    }else{ // 默认为自动判断
-        $method =   'param';
-    }
-    switch(strtolower($method)) {
-        case 'get'     :
-            $input =& $_GET;
-            break;
-        case 'post'    :
-            $input =& $_POST;
-            break;
-        case 'put'     :
-            if(is_null($_PUT)){
-                parse_str(file_get_contents('php://input'), $_PUT);
-            }
-            $input 	=	$_PUT;
-            break;
-        case 'param'   :
-            switch($_SERVER['REQUEST_METHOD']) {
-                case 'POST':
-                    $input  =  $_POST;
-                    break;
-                case 'PUT':
-                    if(is_null($_PUT)){
-                        parse_str(file_get_contents('php://input'), $_PUT);
-                    }
-                    $input 	=	$_PUT;
-                    break;
-                default:
-                    $input  =  $_GET;
-            }
-            break;
-        case 'path'    :
-            $input  =   array();
-            if(!empty($_SERVER['PATH_INFO'])){
-                $depr   =   '/';
-                $input  =   explode($depr,trim($_SERVER['PATH_INFO'],$depr));
-            }
-            break;
-        case 'request' :
-            $input =& $_REQUEST;
-            break;
-        case 'session' :
-            $input =& $_SESSION;
-            break;
-        case 'cookie'  :
-            $input =& $_COOKIE;
-            break;
-        case 'server'  :
-            $input =& $_SERVER;
-            break;
-        case 'globals' :
-            $input =& $GLOBALS;
-            break;
-        case 'data'    :
-            $input =& $datas;
-            break;
-        default:
-            return null;
-    }
-    if(''==$name) { // 获取全部变量
-        $data       =   $input;
-        $filters    =   isset($filter)?$filter:\Yaf\Registry::get('config')->user->default_filter;
-        if($filters) {
-            if(is_string($filters)){
-                $filters    =   explode(',',$filters);
-            }
-            foreach($filters as $filter){
-                $data   =   array_map_recursive($filter,$data); // 参数过滤
-            }
-        }
-    }elseif(isset($input[$name])) { // 取值操作
-        $data       =   $input[$name];
-        $filters    =   isset($filter)?$filter:\Yaf\Registry::get('config')->user->default_filter;
-        if($filters) {
-            if(is_string($filters)){
-                if(0 === strpos($filters,'/')){
-                    if(1 !== preg_match($filters,(string)$data)){
-                        // 支持正则验证
-                        return   isset($default) ? $default : null;
-                    }
-                }else{
-                    $filters    =   explode(',',$filters);
-                }
-            }elseif(is_int($filters)){
-                $filters    =   array($filters);
-            }
 
-            if(is_array($filters)){
-                foreach($filters as $filter){
-                    if(function_exists($filter)) {
-                        $data   =   is_array($data) ? array_map_recursive($filter,$data) : $filter($data); // 参数过滤
-                    }else{
-                        $data   =   filter_var($data,is_int($filter) ? $filter : filter_id($filter));
-                        if(false === $data) {
-                            return   isset($default) ? $default : null;
-                        }
-                    }
-                }
-            }
-        }
-        if(!empty($type)){
-            switch(strtolower($type)){
-                case 'a':	// 数组
-                    $data 	=	(array)$data;
-                    break;
-                case 'd':	// 数字
-                    $data 	=	(int)$data;
-                    break;
-                case 'f':	// 浮点
-                    $data 	=	(float)$data;
-                    break;
-                case 'b':	// 布尔
-                    $data 	=	(boolean)$data;
-                    break;
-                case 's':   // 字符串
-                default:
-                    $data   =   (string)$data;
-            }
-        }
-    }else{ // 变量默认值
-        $data       =    isset($default)?$default:null;
-    }
-    is_array($data) && array_walk_recursive($data,'other_safe_filter');
-    return $data;
-}
-
-/**
- * 其他安全过滤 From ThinkPHP 系统函数库 为input函数服务
- * @param $value
- */
-function other_safe_filter(&$value)
+function check_str($string, $isurl = false)
 {
-    // TODO 其他安全过滤
-    // 过滤查询特殊字符
-    if (preg_match('/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i', $value)) {
-        $value .= ' ';
-    }
+    $string = preg_replace('/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F]/', '', $string); //去掉控制字符
+
+    $string = str_replace(array("\0", "%00", "\r"), '', $string); //\0表示ASCII 0x00的字符，通常作为字符串结束标志；这三个都是可能有害字符
+
+    empty($isurl) && $string = preg_replace("/&(?!(#[0-9]+|[a-z]+);)/si", '&', $string); //HTML里面可以用&#xxx;来对一些字符进行编码，比如 (空格), ? Unicode字符等，A(?!B) 表示的是A后面不是B,所以作者想保留 ?类似的 HTML编码字符，去掉其他的问题字符
+
+    $string = str_replace(array("%3C", '<'), '<', $string); //ascii的'<'转成'<';
+
+    $string = str_replace(array("%3E", '>'), '>', $string);
+
+    $string = str_replace(array('"', "'", "\t", ' '), array('“', '‘', ' ', ' '), $string);
+
+    return trim($string);
+
 }
 
 /**
- * 用于input函数的递归
- * @param $filter
- * @param $data
+ * 安全过滤类-过滤javascript,css,iframes,object等不安全参数 过滤级别高
+ * @param  string $value 需要过滤的值
+ * @return string
+ */
+
+function fliter_script($value)
+{
+    $value = preg_replace("/(javascript:)?on(click|load|key|mouse|error|abort|move|unload|change|dblclick|move|reset|resize|submit)/i", "&111n\\2", $value);
+
+    $value = preg_replace("/(.*?)<\/script>/si", "", $value);
+
+    $value = preg_replace("/(.*?)<\/iframe>/si", "", $value);
+
+    $value = preg_replace("//iesU", '', $value);
+
+    return $value;
+
+}
+
+/**
+ * 安全过滤类-过滤HTML标签
+ * @param  string $value 需要过滤的值
+ * @return string
+ */
+
+function fliter_html($value)
+{
+    if (function_exists('htmlspecialchars')) return htmlspecialchars($value);
+
+    return str_replace(array("&", '"', "'", "<", ">"), array("&", "\"", "'", "<", ">"), $value);
+
+}
+
+/**
+ * 安全过滤类-对进入的数据加下划线 防止SQL注入
+ * @param  string $value 需要过滤的值
+ * @return string
+ */
+
+function fliter_sql($value)
+{
+    $sql = array("select", 'insert', "update", "delete", "\'", "\/\*", "\.\.\/", "\.\/", "union", "into", "load_file", "outfile");
+
+    $sql_re = array("", "", "", "", "", "", "", "", "", "", "", "");
+
+    return str_replace($sql, $sql_re, $value);
+
+}
+
+/**
+ * 私有路劲安全转化
+ * @param string $fileName
+ * @return string
+ */
+
+function filter_dir($fileName)
+{
+    $tmpname = strtolower($fileName);
+
+    $temp = array(':/', "\0", "..");
+
+    if (str_replace($temp, '', $tmpname) !== $tmpname) {
+
+        return false;
+
+    }
+
+    return $fileName;
+
+}
+
+/**
+ * 过滤目录
+ * @param string $path
  * @return array
  */
-function array_map_recursive($filter, $data)
+
+function filter_path($path)
 {
-    $result = array();
-    foreach ($data as $key => $val) {
-        $result[$key] = is_array($val)
-            ? array_map_recursive($filter, $val)
-            : call_user_func($filter, $val);
-    }
-    return $result;
+    $path = str_replace(array("'", '#', '=', '`', '$', '%', '&', ';'), '', $path);
+
+    return rtrim(preg_replace('/(\/){2,}|(\\\){1,}/', '/', $path), '/');
+
 }
 
 /**
- * 获取客户端IP地址 FROM ThinkPHP 系统函数库
- * @param integer $type 返回类型 0 返回IP地址 1 返回IPV4地址数字
- * @param boolean $adv 是否进行高级模式获取（有可能被伪装）
- * @return mixed
+ * 过滤PHP标签
+ * @param string $string
+ * @return string
  */
-function get_client_ip($type = 0, $adv = false) {
-    $type       =  $type ? 1 : 0;
-    static $ip  =   NULL;
-    if ($ip !== NULL) return $ip[$type];
-    if($adv){
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $arr    =   explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            $pos    =   array_search('unknown',$arr);
-            if(false !== $pos) unset($arr[$pos]);
-            $ip     =   trim($arr[0]);
-        }elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip     =   $_SERVER['HTTP_CLIENT_IP'];
-        }elseif (isset($_SERVER['REMOTE_ADDR'])) {
-            $ip     =   $_SERVER['REMOTE_ADDR'];
-        }
-    }elseif (isset($_SERVER['REMOTE_ADDR'])) {
-        $ip     =   $_SERVER['REMOTE_ADDR'];
-    }
-    // IP地址合法验证
-    $long = sprintf("%u",ip2long($ip));
-    $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
-    return $ip[$type];
-}
 
-/**
- * GET 请求 FROM wechat-php-sdk
- * @param string $url
- */
-function http_get($url){
-    $oCurl = curl_init();
-    if(stripos($url,"https://")!==FALSE){
-        curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, FALSE);
-        curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
-    }
-    curl_setopt($oCurl, CURLOPT_URL, $url);
-    curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
-    $sContent = curl_exec($oCurl);
-    $aStatus = curl_getinfo($oCurl);
-    curl_close($oCurl);
-    if(intval($aStatus["http_code"])==200){
-        return $sContent;
-    }else{
-        return false;
-    }
-}
-
-/**
- * POST 请求 FROM wechat-php-sdk
- * @param string $url
- * @param array $param
- * @param boolean $post_file 是否文件上传
- * @return string content
- */
-function http_post($url, $param, $post_file=false){
-    $oCurl = curl_init();
-    if (stripos($url,"https://") !== FALSE) {
-        curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
-    }
-    if (is_string($param) || $post_file) {
-        $strPOST = $param;
-    } else {
-        $aPOST = array();
-        foreach($param as $key=>$val){
-            $aPOST[] = $key."=".urlencode($val);
-        }
-        $strPOST =  join("&", $aPOST);
-    }
-    curl_setopt($oCurl, CURLOPT_URL, $url);
-    curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1 );
-    curl_setopt($oCurl, CURLOPT_POST,true);
-    curl_setopt($oCurl, CURLOPT_POSTFIELDS,$strPOST);
-    $sContent = curl_exec($oCurl);
-    $aStatus = curl_getinfo($oCurl);
-    curl_close($oCurl);
-    if(intval($aStatus["http_code"])==200){
-        return $sContent;
-    }else{
-        return false;
-    }
-}
-
-
-/**
- * curl 批处理
- * @param $url_array
- * @return array
- * @author jsyzchenchen@gmail.com
- */
-function curl_multi($data, $options = array())
+function filter_phptag($string)
 {
-    $handles = $contents = array();
-    //初始化curl multi对象
-    $mh = curl_multi_init();
-    //添加curl 批处理会话
-    foreach ($data as $key => $value) {
-        $url = (is_array($value) && !empty($value['url'])) ? $value['url'] : $value;
-        $handles[$key] = curl_init($url);
-        curl_setopt($handles[$key], CURLOPT_RETURNTRANSFER, 1);
+    return str_replace(array(''), array('<?', '?>'), $string);
 
-        //判断是否是post
-        if (is_array($value)) {
-            if (!empty($value['post'])) {
-                curl_setopt($handles[$key], CURLOPT_POST,       1);
-                curl_setopt($handles[$key], CURLOPT_POSTFIELDS, $value['post']);
-            }
-        }
-
-        //extra options?
-        if (!empty($options)) {
-            curl_setopt_array($handles[$key], $options);
-        }
-
-        curl_multi_add_handle($mh, $handles[$key]);
-    }
-    //======================执行批处理句柄=================================
-    $active = null;
-    do {
-        $mrc = curl_multi_exec($mh, $active);
-    } while ($mrc == CURLM_CALL_MULTI_PERFORM);
-    while ($active and $mrc == CURLM_OK) {
-        if (curl_multi_select($mh) === -1) {
-            usleep(100);
-        }
-        do {
-            $mrc = curl_multi_exec($mh, $active);
-        } while ($mrc == CURLM_CALL_MULTI_PERFORM);
-    }
-    //====================================================================
-    //获取批处理内容
-    foreach ($handles as $i => $ch) {
-        $content = curl_multi_getcontent($ch);
-        $contents[$i] = curl_errno($ch) == 0 ? $content : '';
-    }
-    //移除批处理句柄
-    foreach ($handles as $ch) {
-        curl_multi_remove_handle($mh, $ch);
-    }
-    //关闭批处理句柄
-    curl_multi_close($mh);
-    return $contents;
 }
 
-function objectToArray($obj) {
-    //首先判断是否是对象
-    $arr = is_object($obj) ? get_object_vars($obj) : $obj;
-    if(is_array($arr)) {
-        //这里相当于递归了一下，如果子元素还是对象的话继续向下转换
-        return array_map(__FUNCTION__, $arr);
-    }else {
-        return $arr;
-    }
-}
+/**
+ * 安全过滤类-返回函数
+ * @param  string $value 需要过滤的值
+ * @return string
+ */
 
-function arrayToObject($arr) {
-    if(is_array($arr)) {
-        return (object)array_map(__FUNCTION__, $arr);
-    }else {
-        return $arr;
-    }
-}
+function str_out($value)
+{
+    $badstr = array("<", ">", "%3C", "%3E");
 
+    $newstr = array("<", ">", "<", ">");
+
+    $value = str_replace($newstr, $badstr, $value);
+
+    return stripslashes($value); //下划线
+
+}

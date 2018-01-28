@@ -39,12 +39,12 @@ class HttpServer
     {
         $this->http = new Swoole\WebSocket\Server('0.0.0.0', 9501);
         $this->http->set([
-            'worker_num' => 8,
+            'worker_num' => 16,
             'daemonize' => false,
             'max_request' => 300000,
             'max_coro_num' => 100000,
             'dispatch_mode' => 2,
-            'task_worker_num' => 8,
+            'task_worker_num' => 16,
             'log_file' => ROOT_PATH . '/log/swoole.log',
             'heartbeat_check_interval' => 660,
             'heartbeat_idle_time' => 1200,
@@ -87,6 +87,11 @@ class HttpServer
 
     public function onWorkerStart(Swoole\WebSocket\Server $http, $worker_id)
     {
+        if ($http->taskworker) {
+            swoole_set_process_name('taskProcess');
+        } else {
+            swoole_set_process_name('workerProcess');
+        }
         //var_dump(get_included_files()); //此数组中的文件表示进程启动前就加载了，所以无法reload
         Yaf\Loader::import(ROOT_PATH . '/vendor/autoload.php');
 
@@ -116,10 +121,22 @@ class HttpServer
             //'socket' => '/var/run/mysqld/mysqld.sock',
             'username' => Yaf\Application::app()->getConfig()->database->username,
             'password' => Yaf\Application::app()->getConfig()->database->password,
-            'charset' => Yaf\Application::app()->getConfig()->database->charset
+            'charset' => Yaf\Application::app()->getConfig()->database->charset,
+            'port' => Yaf\Application::app()->getConfig()->database->port,
+            'prefix' => Yaf\Application::app()->getConfig()->database->prefix,
+            'logging' => true,
+            'option' => [
+                PDO::ATTR_CASE => PDO::CASE_NATURAL,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+                //PDO::ATTR_PERSISTENT => true
+            ],
+            'command' => [
+                'SET SQL_MODE=ANSI_QUOTES'
+            ]
         ]);
-        $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         Yaf\Registry::set('db', $database);
+
 
     }
 
@@ -194,20 +211,20 @@ class HttpServer
 
     /**
      * http协议中使用task方法,只限用于在worker操作方法中调用task时不依赖task方法返回的结果,如:redis,mysql等插入操作且不需返回插入后的状态.
-     * websocket协议中用task方法,可直接在task方法中调用push方法返回数据给客户端,这样swoole服务模式就变为worker中方法是异步到task方法中同步执行模式,worker中可更多地处理请求以提高websocket服务器性能.
+     * websocket协议中用task方法,可直接在task方法中调用push方法返回数据给客户端,这样swoole服务模式就变为worker中方法是
+     * 异步到task方法中同步执行模式,worker中可更多地处理请求以提高websocket服务器性能.
      * @param $http
      * @param $task_id
-     * @param $reactor_id
+     * @param $src_worker_id
      * @param $data
      * @return bool
      */
-    public function onTask(Swoole\WebSocket\Server $http, $task_id, $reactor_id, $data)
+    public function onTask(Swoole\WebSocket\Server $http, $task_id, $worker_id, $data)
     {
-        //$get = Yaf\Registry::get('db')->query("select * from `users` ")->fetchAll(PDO::FETCH_ASSOC);
-        //var_dump($get);
         //$get = Yaf\Registry::get('redis')->get('key');
         //echo $get;
-        return true;
+        $result = Yaf\Registry::get('db')->query("select * from `users` where id=1 limit 1 ")->fetchAll(PDO::FETCH_ASSOC);
+        return json_encode($result);
 
     }
 

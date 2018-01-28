@@ -31,8 +31,8 @@ class IndexController extends Yaf\Controller_Abstract
     public function init()
     {
         $this->response = Yaf\Registry::get('response');
-        $this->redis = Yaf\Registry::get('redis');
-        $this->db = Yaf\Registry::get('db');
+        $this->redis    = Yaf\Registry::get('redis');
+        $this->db       = Yaf\Registry::get('db');
 
     }
 
@@ -51,19 +51,18 @@ class IndexController extends Yaf\Controller_Abstract
      * 这里测试的两种状态方法，可以互补。
      * swoole中的request方法可以获取到header、server、cookie等信息
      * yaf中的request方法可以更容易直观地获取到写业务逻辑时所需要的module、controller、method、params等信息
+     * 且yaf获取get,post参数时设置了安全过滤
      * @return bool
      */
     public function ceshiAction(): bool
     {
+       // var_dump(Yaf\Registry::get('request')->get['hanhui']) . PHP_EOL;
+       // var_dump($this->getRequest()->getParam('hanhui')) . PHP_EOL;
 
-        var_dump(Yaf\Registry::get('request')) . PHP_EOL;
-        var_dump($this->getRequest()) . PHP_EOL;
+        //var_dump(Yaf\Registry::get('response')) . PHP_EOL;
+        //var_dump($this->getResponse()) . PHP_EOL;
 
-        var_dump(Yaf\Registry::get('response')) . PHP_EOL;
-        var_dump($this->getResponse()) . PHP_EOL;
-
-
-        echo 'index ceshi';
+        echo 'index "hh" ceshi';
         return false;
     }
 
@@ -135,7 +134,9 @@ class IndexController extends Yaf\Controller_Abstract
     public function taskAction()
     {
         Yaf\Dispatcher::getInstance()->disableView();
-        Yaf\Registry::get('http')->task('task');
+        $result = Yaf\Registry::get('http')->taskwait('task');
+        echo $result;
+        return false;
     }
 
     public function cs404Action(): bool
@@ -145,6 +146,13 @@ class IndexController extends Yaf\Controller_Abstract
         echo '非法请求，4043';
         return false;
 
+    }
+
+    public function setCookAction()
+    {
+        $this->response->cookie("csa", 'csvalue');
+        echo 'set cookie';
+        return false;
     }
 
 }
