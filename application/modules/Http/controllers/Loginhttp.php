@@ -8,7 +8,7 @@
 class LoginhttpController extends Yaf\Controller_Abstract {
 
     public function ceshiAction(){
-        echo 'Http Loginhttp ceshi';
+        echo 'Http Loginhttp hanhyu';
         return false;
     }
 

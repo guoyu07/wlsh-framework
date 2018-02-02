@@ -6,6 +6,8 @@
  * Date: 17-12-9
  * Time: 下午5:17
  */
+require 'AutoReload.php';
+
 class HttpServer
 {
     private $http;
@@ -37,7 +39,7 @@ class HttpServer
 
     public function start()
     {
-        $this->http = new Swoole\WebSocket\Server('0.0.0.0', 9501);
+        $this->http = new Swoole\WebSocket\Server('0.0.0.0', '9501');
         $this->http->set([
             'worker_num' => 16,
             'daemonize' => false,
@@ -78,6 +80,7 @@ class HttpServer
         $myfile = fopen(ROOT_PATH . '/log/swoolePid.log', 'w');
         fwrite($myfile, json_encode(['masterPid' => $http->master_pid]));
         fclose($myfile);
+
     }
 
     public function onManagerStart(Swoole\WebSocket\Server $http)
@@ -87,11 +90,23 @@ class HttpServer
 
     public function onWorkerStart(Swoole\WebSocket\Server $http, $worker_id)
     {
+        //用inotify监听mvc目录,一有变动就自动重启脚本
+        if (0 == $worker_id) {
+            $kit = new AutoReload($http->master_pid);
+            $kit->watch(APPLICATION_PATH . "/controllers");
+            $kit->watch(APPLICATION_PATH . "/models");
+            $kit->watch(APPLICATION_PATH . "/modules");
+            $kit->addFileType('.php');
+            $kit->run();
+        }
+
+        //重命名进程名字
         if ($http->taskworker) {
             swoole_set_process_name('taskProcess');
         } else {
             swoole_set_process_name('workerProcess');
         }
+
         //var_dump(get_included_files()); //此数组中的文件表示进程启动前就加载了，所以无法reload
         Yaf\Loader::import(ROOT_PATH . '/vendor/autoload.php');
 
@@ -110,25 +125,28 @@ class HttpServer
 
         //添加redis连接池
         $redis = new Redis();
-        $redis->connect(Yaf\Application::app()->getConfig()->cache->host, Yaf\Application::app()->getConfig()->cache->port);
+        $redis->connect(Yaf\Registry::get('config')->cache->host, Yaf\Registry::get('config')->cache->port);
         Yaf\Registry::set('redis', $redis);
 
         //添加mysql数据库连接池
         $database = new \Medoo\Medoo([
-            'database_type' => Yaf\Application::app()->getConfig()->database->driver,
-            'database_name' => Yaf\Application::app()->getConfig()->database->database,
-            'server' => Yaf\Application::app()->getConfig()->database->host,
+            'database_type' => Yaf\Registry::get('config')->database->driver,
+            'database_name' => Yaf\Registry::get('config')->database->database,
+            'server' => Yaf\Registry::get('config')->database->host,
             //'socket' => '/var/run/mysqld/mysqld.sock',
-            'username' => Yaf\Application::app()->getConfig()->database->username,
-            'password' => Yaf\Application::app()->getConfig()->database->password,
-            'charset' => Yaf\Application::app()->getConfig()->database->charset,
-            'port' => Yaf\Application::app()->getConfig()->database->port,
-            'prefix' => Yaf\Application::app()->getConfig()->database->prefix,
+            'username' => Yaf\Registry::get('config')->database->username,
+            'password' => Yaf\Registry::get('config')->database->password,
+            'charset' => Yaf\Registry::get('config')->database->charset,
+            'port' => Yaf\Registry::get('config')->database->port,
+            'prefix' => Yaf\Registry::get('config')->database->prefix,
             'logging' => true,
             'option' => [
                 PDO::ATTR_CASE => PDO::CASE_NATURAL,
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+                PDO::ATTR_ORACLE_NULLS => PDO::NULL_TO_STRING,
+                PDO::ATTR_TIMEOUT => 200,
+                //PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 //PDO::ATTR_PERSISTENT => true
             ],
             'command' => [
@@ -137,6 +155,27 @@ class HttpServer
         ]);
         Yaf\Registry::set('db', $database);
 
+        //添加pgsql数据库连接池
+        $pg = new \Medoo\Medoo([
+            'database_type' => 'pgsql',
+            'database_name' => 'swoole',
+            'server' => '127.0.0.1',
+            'username' => 'postgres',
+            'password' => '123456',
+            'charset' => 'utf8',
+            'port' => '5432',
+            'logging' => true,
+            'option' => [
+                PDO::ATTR_CASE => PDO::CASE_NATURAL,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+                PDO::ATTR_ORACLE_NULLS => PDO::NULL_TO_STRING,
+                PDO::ATTR_TIMEOUT => 200,
+                //PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                //PDO::ATTR_PERSISTENT => true
+            ],
+        ]);
+        Yaf\Registry::set('pg', $pg);
 
     }
 
@@ -238,7 +277,5 @@ class HttpServer
     {
         // Yaf\Registry::get('swoole_http_response')->end($data);
     }
-
-    //todo 增加inotify修改文件可即时生效
 
 }

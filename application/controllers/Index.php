@@ -112,6 +112,15 @@ class IndexController extends Yaf\Controller_Abstract
         return false;
     }
 
+    public function pgDBAction(): bool
+    {
+        $get = Yaf\Registry::get('pg')->query("select * from users where id=1")->fetchAll(PDO::FETCH_ASSOC);
+        $this->response->header('Content-Type', 'application/json;charset=utf-8');
+        //(new \Yaf\Response\Http())->setHeader('Content-Type', 'application/json;charset=utf-8');
+        echo json_encode($get);
+        return false;
+    }
+
     public function mysqlAction(): bool
     {
         $get = $this->db->query("select * from `users` where id=1 limit 1 ")->fetchAll(PDO::FETCH_ASSOC);
@@ -139,11 +148,12 @@ class IndexController extends Yaf\Controller_Abstract
         return false;
     }
 
-    public function cs404Action(): bool
+    public function opcacheAction(): bool
     {
         $this->response->header('Content-Type', 'text/html;charset=utf-8');
         $this->response->status(404);
-        echo '非法请求，4043';
+        //var_dump(opcache_get_status());
+        var_dump(opcache_get_status()['opcache_statistics']);
         return false;
 
     }
