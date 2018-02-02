@@ -7,7 +7,7 @@
 ### 基本要求
 对于使用wlsh-framework的开发者，需要掌握swoole基本的理念，熟悉yaf框架，熟悉composer用法及理念。对于这三点要求，我想PHPer应很容易达到。
 
-> wlsh-framework框架启动最低要求：必须已安装php 7.2，yaf 3.0.5框架，swoole 1.10.0扩展。
+> wlsh-framework框架启动最低要求：必须已安装php 7.2、yaf 3.0.5、swoole 2.0.12、inotify扩展等。
 
 ### 使用对象
 
